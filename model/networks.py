@@ -5,7 +5,7 @@ from keras.utils import np_utils
 from sklearn.preprocessing import LabelEncoder
 
 
-def dnn(x, y, val_x, val_y, batch_size=32, epochs=70):
+def dnn(x, y, val_x, val_y, batch_size=32, epochs=1500):
     # prepare labels
     lb = LabelEncoder()
     y = np_utils.to_categorical(lb.fit_transform(y))
@@ -14,11 +14,13 @@ def dnn(x, y, val_x, val_y, batch_size=32, epochs=70):
     # build model
     model = Sequential()
 
-    model.add(Dense(256, input_shape=(x.shape[1],)))
+    model.add(Dense(128, input_shape=(x.shape[1],)))
     model.add(Activation('relu'))
+    model.add(Dropout(0.3))
 
-    model.add(Dense(256))
+    model.add(Dense(128))
     model.add(Activation('relu'))
+    model.add(Dropout(0.3))
 
     model.add(Dense(y.shape[1]))
     model.add(Activation('softmax'))
@@ -27,17 +29,19 @@ def dnn(x, y, val_x, val_y, batch_size=32, epochs=70):
 
     history = model.fit(x, y, batch_size=batch_size, epochs=epochs, validation_data=(val_x, val_y))
 
-    return model, history, lb.classes_
+    return model, history
 
 
-def cnn(x, y, val_x, val_y, batch_size=32, epochs=70):
-    # expand set for cnn
+def cnn(x, y, val_x, val_y, batch_size=32, epochs=150):
+    # expand for input layer
     x = np.expand_dims(x, axis=2)
     val_x = np.expand_dims(val_x, axis=2)
+
     # prepare labels
     lb = LabelEncoder()
     y = np_utils.to_categorical(lb.fit_transform(y))
     val_y = np_utils.to_categorical(lb.fit_transform(val_y))
+
     # build model
     model = Sequential()
 
@@ -46,17 +50,14 @@ def cnn(x, y, val_x, val_y, batch_size=32, epochs=70):
 
     model.add(Conv1D(128, 5, padding='same'))
     model.add(Activation('relu'))
-    model.add(Dropout(0.1))
+    model.add(Dropout(0.2))
 
     model.add(MaxPooling1D(pool_size=8))
 
-    model.add(Conv1D(128, 5, padding='same'))
+    model.add(Conv1D(64, 5, padding='same'))
     model.add(Activation('relu'))
 
-    model.add(Conv1D(128, 5, padding='same'))
-    model.add(Activation('relu'))
-
-    model.add(Conv1D(128, 5, padding='same'))
+    model.add(Conv1D(64, 5, padding='same'))
     model.add(Activation('relu'))
     model.add(Dropout(0.2))
 
@@ -70,4 +71,4 @@ def cnn(x, y, val_x, val_y, batch_size=32, epochs=70):
     model.compile(loss='categorical_crossentropy', metrics=['accuracy'], optimizer='adam')
     history = model.fit(x, y, batch_size=batch_size, epochs=epochs, validation_data=(val_x, val_y))
 
-    return model, history, lb.classes_
+    return model, history
