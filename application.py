@@ -7,12 +7,12 @@ from model.utils import NetworkType
 application = Flask(__name__)
 
 
-@application.route('/train/{model_type}', methods=['POST'])
+@application.route('/train/<model_type>', methods=['POST'])
 def train_network_model(model_type):
     return 
 
 
-@application.route('/prediction/{model_type}', methods=['POST'])
+@application.route('/prediction/<model_type>', methods=['POST'])
 def predict_emotion_from_feature(model_type):
     try:
         network_type = NetworkType(model_type)
