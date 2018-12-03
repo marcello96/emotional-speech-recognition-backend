@@ -27,6 +27,7 @@ def read_model(network_type):
     json_file = open(prepare_model_path("{}_model.json".format(network_type)), 'r')
     loaded_model_json = json_file.read()
     json_file.close()
+
     loaded_model = model_from_json(loaded_model_json)
 
     # load weights into new model

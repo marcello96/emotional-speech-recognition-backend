@@ -7,7 +7,7 @@ import pandas as pd
 # constants
 NUMBER_OF_MFCCS = 25
 RAVDESS_LABELS = ['neutral', 'calm', 'happy', 'sad', 'angry', 'fearful', 'disgust', 'surprised']
-MODEL_LABELS = RAVDESS_LABELS.sort()
+MODEL_LABELS = sorted(RAVDESS_LABELS)
 
 
 def map_ravdess_filename_to_label(filename):
@@ -38,7 +38,7 @@ def load_files(directory_path, map_file_to_label=map_ravdess_filename_to_label):
         files = os.listdir(os.path.join(directory_path, actor_folder))
         for f in files:
             if f.endswith('.wav'):
-                file_label_dict[os.path.join(directory_path, actor_folder, f)] = map_file_to_label(f)
+                file_label_dict[d(directory_path, actor_folder, f)] = map_file_to_label(f)
 
     train = pd.DataFrame.from_dict(file_label_dict, orient='index')
     train = train.reset_index(drop=False)

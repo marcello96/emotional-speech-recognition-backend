@@ -1,14 +1,22 @@
 import numpy as np
+import tensorflow as tf
 
+import model.preprocessing as mp
 from configuration import read_database_path
 from model.networks import dnn, cnn
 from model.os import read_model
-from model.preprocessing import MODEL_LABELS, prepare_learning_data, load_files, map_ravdess_filename_to_label
 from model.utils import NetworkType, prepare_prediction_response
 
-# load models
-cnn_model = read_model('cnn')
-dnn_model = read_model('dnn')
+
+def load_models():
+    global cnn_model
+    cnn_model = read_model('cnn')
+
+    global dnn_model
+    dnn_model = read_model('dnn')
+
+    global graph
+    graph = tf.get_default_graph()
 
 
 def train_model(network_type, training_data_rate, batch_size, epochs):
@@ -16,8 +24,8 @@ def train_model(network_type, training_data_rate, batch_size, epochs):
         return None, None
 
     # prepare data
-    data = load_files(read_database_path(), map_ravdess_filename_to_label)
-    x, y, val_x, val_y = prepare_learning_data(data, training_data_rate)
+    data = mp.load_files(read_database_path(), mp.map_ravdess_filename_to_label)
+    x, y, val_x, val_y = mp.prepare_learning_data(data, training_data_rate)
 
     if network_type == NetworkType.DNN:
         return dnn(x, y, val_x, val_y, batch_size=batch_size, epochs=epochs)
@@ -27,14 +35,17 @@ def train_model(network_type, training_data_rate, batch_size, epochs):
 
 
 def predict_emotion(x, network_type):
+    x = np.array(x).reshape(1, -1)
     if network_type == NetworkType.DNN:
-        prediction = dnn_model.predict(x)
+        with graph.as_default():
+            prediction = dnn_model.predict(x)
     elif network_type == NetworkType.CNN:
-        prediction = cnn_model.predict(np.expand_dims(x, axis=2))
+        with graph.as_default():
+            prediction = cnn_model.predict(np.expand_dims(x, axis=2))
     else:
         return None
 
-    return prepare_prediction_response(prediction, MODEL_LABELS)
+    return prepare_prediction_response(prediction[0], mp.MODEL_LABELS)
 
 
 

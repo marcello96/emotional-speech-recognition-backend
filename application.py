@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request
 from werkzeug.exceptions import BadRequest
 
-from model.services import predict_emotion
+from model.services import predict_emotion, load_models
 from model.utils import NetworkType
 
 application = Flask(__name__)
@@ -18,15 +18,17 @@ def predict_emotion_from_feature(model_type):
         network_type = NetworkType(model_type)
         data = request.get_json()
         mfcc = data['mfcc']
+
         prediction = predict_emotion(mfcc, network_type)
 
-        return jsonify(prediction)
-    except ValueError:
+        return jsonify(str(prediction))
+    except ValueError as e:
+        print(e)
         raise BadRequest('Wrong learning network type')
 
 
 # run the app.
 if __name__ == "__main__":
-
-    application.debug = True
+    load_models()
+    application.debug = False
     application.run()
