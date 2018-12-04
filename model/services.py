@@ -1,5 +1,4 @@
 import numpy as np
-import tensorflow as tf
 
 import model.preprocessing as mp
 from configuration import read_database_path
@@ -11,12 +10,11 @@ from model.utils import NetworkType, prepare_prediction_response
 def load_models():
     global cnn_model
     cnn_model = read_model('cnn')
+    cnn_model._make_predict_function()
 
     global dnn_model
     dnn_model = read_model('dnn')
-
-    global graph
-    graph = tf.get_default_graph()
+    dnn_model._make_predict_function()
 
 
 def train_model(network_type, training_data_rate, batch_size, epochs):
@@ -37,15 +35,10 @@ def train_model(network_type, training_data_rate, batch_size, epochs):
 def predict_emotion(x, network_type):
     x = np.array(x).reshape(1, -1)
     if network_type == NetworkType.DNN:
-        with graph.as_default():
-            prediction = dnn_model.predict(x)
+        prediction = dnn_model.predict(x)
     elif network_type == NetworkType.CNN:
-        with graph.as_default():
-            prediction = cnn_model.predict(np.expand_dims(x, axis=2))
+        prediction = cnn_model.predict(np.expand_dims(x, axis=2))
     else:
         return None
 
     return prepare_prediction_response(prediction[0], mp.MODEL_LABELS)
-
-
-

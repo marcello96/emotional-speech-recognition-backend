@@ -30,5 +30,5 @@ def predict_emotion_from_feature(model_type):
 # run the app.
 if __name__ == "__main__":
     load_models()
-    application.debug = False
+    application.debug = True
     application.run()
