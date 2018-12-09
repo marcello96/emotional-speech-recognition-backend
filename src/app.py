@@ -13,10 +13,13 @@ class Prediction:
             if req.content_length:
                 mfccs = json.load(req.stream)['mfcc']
 
-            prediction = predict_emotion(mfccs, network_type)
+                prediction = predict_emotion(mfccs, network_type)
 
-            resp.status = falcon.HTTP_200
-            resp.body = json.dumps(str(prediction))
+                resp.status = falcon.HTTP_200
+                resp.body = json.dumps(str(prediction))
+            else:
+                resp.status = falcon.HTTP_400
+                resp.body = 'Wrong number of mfcc features'
         except ValueError as e:
             resp.status = falcon.HTTP_400
             resp.body = json.dumps(str(e))

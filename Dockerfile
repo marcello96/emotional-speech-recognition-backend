@@ -1,17 +1,21 @@
-FROM python:3.6
+FROM python:3.6-slim
 
 MAINTAINER Marcin Jakubowski
-
-RUN apt-get update && \
-    apt-get install -y nginx supervisor
-
-ADD /conf/supervisor.ini /etc/supervisor/supervisord.conf
-ADD /conf/nginx.conf /etc/nginx/nginx.conf
 
 RUN mkdir -p /project
 WORKDIR /project
 
-RUN pip install cython
+RUN apt-get update && apt-get install -y \
+    nginx \
+    supervisor \
+    gcc \
+    musl-dev \
+ && rm -rf /var/lib/apt/lists/*
+
+ADD /conf/supervisor.ini /etc/supervisor/supervisord.conf
+ADD /conf/nginx.conf /etc/nginx/nginx.conf
+
+RUN pip install --no-cache-dir cython
 RUN pip install --no-binary :all: falcon
 
 COPY requirements.txt /project/
