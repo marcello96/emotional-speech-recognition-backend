@@ -12,3 +12,11 @@ class SimpleEncoder(json.JSONEncoder):
             return obj.tolist()
         else:
             return super(SimpleEncoder, self).default(obj)
+        
+        
+def map_to_json_response(predictions):
+    def map_prediction_elem(key, value):
+        return {'emotionType': key,
+                'prediction': value}
+
+    return {'results': [map_prediction_elem(key, value) for key, value in predictions.items()]}

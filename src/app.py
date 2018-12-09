@@ -4,7 +4,7 @@ import falcon
 
 from model.services import predict_emotion, load_models
 from model.utils import NetworkType
-from model.converter import SimpleEncoder
+from model.converter import SimpleEncoder, map_to_json_response
 
 
 class Prediction:
@@ -17,7 +17,7 @@ class Prediction:
                 prediction = predict_emotion(mfccs, network_type)
 
                 resp.status = falcon.HTTP_200
-                resp.body = json.dumps(prediction, cls=SimpleEncoder)
+                resp.body = json.dumps(map_to_json_response(prediction), cls=SimpleEncoder)
             else:
                 resp.status = falcon.HTTP_400
                 resp.body = 'Wrong number of mfcc features'
