@@ -16,11 +16,11 @@ def map_ravdess_filename_to_label(filename):
     return RAVDESS_LABELS[label_no]
 
 
-def extract_feature(row):
+def extract_feature(row, mfccs_no=NUMBER_OF_MFCCS):
     file = row['file']
     try:
         series, sample_rate = librosa.load(file, res_type='kaiser_fast', offset=1.0, duration=2.5)
-        mfcc = np.mean(librosa.feature.mfcc(y=series, sr=sample_rate, n_mfcc=NUMBER_OF_MFCCS).T, axis=0)
+        mfcc = np.mean(librosa.feature.mfcc(y=series, sr=sample_rate, n_mfcc=mfccs_no).T, axis=0)
     except Exception:
         print("Error encountered while parsing file: ", file)
         return None, None
@@ -32,13 +32,12 @@ def extract_feature(row):
 
 def load_files(directory_path, map_file_to_label=map_ravdess_filename_to_label):
     directories = os.listdir(directory_path)
-
     file_label_dict = dict()
     for actor_folder in directories:
         files = os.listdir(os.path.join(directory_path, actor_folder))
         for f in files:
             if f.endswith('.wav'):
-                file_label_dict[d(directory_path, actor_folder, f)] = map_file_to_label(f)
+                file_label_dict[os.path.join(directory_path, actor_folder, f)] = map_file_to_label(f)
 
     train = pd.DataFrame.from_dict(file_label_dict, orient='index')
     train = train.reset_index(drop=False)

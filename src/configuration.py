@@ -1,6 +1,5 @@
 import configparser
 
-
 # constants
 CONFIG_FILE_PATH = 'config.ini'
 
@@ -12,12 +11,12 @@ def open_config_file():
     return config
 
 
-def read_configuration(sections, key):
+def read_configuration(section, key):
     config = open_config_file()
-
     try:
-        return config[sections][key]
-    except KeyError:
+        return config[section][key]
+    except KeyError as e:
+        print(e)
         return None
 
 

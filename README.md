@@ -1,1 +1,3 @@
-# emotional-recognition-backend
+# Emotional speech recognition server
+
+## Instruction

@@ -14,7 +14,7 @@ class SimpleEncoder(json.JSONEncoder):
             return super(SimpleEncoder, self).default(obj)
         
         
-def map_to_json_response(predictions):
+def map_prediction_to_json_response(predictions):
     def map_prediction_elem(key, value):
         return {'emotionType': key,
                 'prediction': value}

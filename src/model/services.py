@@ -18,8 +18,8 @@ def load_models():
 
 
 def train_model(network_type, training_data_rate, batch_size, epochs):
-    if network_type is not NetworkType:
-        return None, None
+    if type(network_type) is not NetworkType:
+        raise ValueError('Wrong value of NetworkType: ', network_type)
 
     # prepare data
     data = mp.load_files(read_database_path(), mp.map_ravdess_filename_to_label)
