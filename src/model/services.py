@@ -17,19 +17,19 @@ def load_models():
     dnn_model._make_predict_function()
 
 
-def train_model(network_type, training_data_rate, batch_size, epochs):
+def train_model(network_type, batch_size, epochs, training_data_rate=0.8, validation_split=0.25):
     if type(network_type) is not NetworkType:
         raise ValueError('Wrong value of NetworkType: ', network_type)
 
     # prepare data
     data = mp.load_files(read_database_path(), mp.map_ravdess_filename_to_label)
-    x, y, val_x, val_y = mp.prepare_learning_data(data, training_data_rate)
+    x, y, test_x, test_y = mp.prepare_learning_data(data, training_data_rate)
 
     if network_type == NetworkType.DNN:
-        return dnn(x, y, val_x, val_y, batch_size=batch_size, epochs=epochs)
+        return dnn(x, y, test_x, test_y, batch_size=batch_size, epochs=epochs, validation_split=validation_split)
 
     elif network_type == NetworkType.CNN:
-        return cnn(x, y, val_x, val_y, batch_size=batch_size, epochs=epochs)
+        return cnn(x, y, test_x, test_y, batch_size=batch_size, epochs=epochs, validation_split=validation_split)
 
 
 def predict_emotion(x, network_type):

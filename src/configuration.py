@@ -1,12 +1,19 @@
 import configparser
+from os.path import dirname, realpath, join
 
 # constants
 CONFIG_FILE_PATH = 'config.ini'
 
 
+def prepare_absolute_config_file_path():
+    dir_of_file = dirname(realpath(__file__))
+
+    return join(dir_of_file, CONFIG_FILE_PATH)
+
+
 def open_config_file():
     config = configparser.ConfigParser()
-    config.read(CONFIG_FILE_PATH)
+    config.read(prepare_absolute_config_file_path())
 
     return config
 
