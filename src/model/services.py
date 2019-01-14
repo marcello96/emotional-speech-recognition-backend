@@ -3,7 +3,7 @@ import numpy as np
 import model.preprocessing as mp
 from configuration import read_database_path
 from model.networks import dnn, cnn
-from model.os import read_model
+from model.os import read_model, save_model
 from model.utils import NetworkType, prepare_prediction_response
 
 
@@ -42,3 +42,10 @@ def predict_emotion(x, network_type):
         return None
 
     return prepare_prediction_response(prediction[0], mp.MODEL_LABELS)
+
+
+if __name__ == '__main__':
+    model, _, accuracy = train_model(NetworkType.DNN, 32, 1500)
+    save_model(model, NetworkType.DNN)
+    print('Model loss:', accuracy[0])
+    print('Model accuracy:', accuracy[1])

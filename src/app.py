@@ -1,5 +1,4 @@
 import json
-
 import falcon
 
 from model.services import predict_emotion, load_models
@@ -13,7 +12,7 @@ class Prediction:
         try:
             network_type = NetworkType(model_type.lower())
             if req.content_length:
-                mfccs = json.load(req.stream)['mfcc']
+                mfccs = json.load(req.stream)['mfccs']
 
                 prediction = predict_emotion(mfccs, network_type)
 
@@ -31,7 +30,7 @@ class Configuration:
     def on_get(self, _, resp):
         resp.status = falcon.HTTP_200
         resp.body = json.dumps({
-            'mfccs': NUMBER_OF_MFCCS
+            'numberOfMfccs': NUMBER_OF_MFCCS
         })
 
 
