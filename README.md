@@ -27,13 +27,13 @@ Server exposes two endpoints:
 -- predicts emotions for specified MFCC coefficients in request.
 
 Request (amount of MFCCs was specified to 25):
-```json
+```
 {
     "mfccs": [{Float},...,{Float}]
 }
 ```
 Response:
-```json
+```
 {
     "results": [
         {
@@ -74,7 +74,7 @@ Response:
 - `GET /init/configuration` -- returns initial configuration, actually it is amount of MFCC coefficients, which should be sent in `/prediction` request
 
 Response:
-```json
+```
 {
     "numberOfMfccs": 25
 }
